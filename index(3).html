@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>osu!mania Custom Charts</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Custom Mania home"><span class="brand-mark">4</span><span>MANIA<span class="brand-muted">/CUSTOM</span></span></a>
+      <div class="topbar-tag">BROWSER RHYTHM ENGINE</div>
+    </header>
+
+    <section id="library-screen" class="screen">
+      <div class="hero">
+        <div class="eyebrow"><span class="live-dot"></span> YOUR MUSIC. YOUR MAPS.</div>
+        <h1>Play your own<br><span class="gradient-text">beat.</span></h1>
+        <p class="hero-copy">Import an osu! beatmap archive and turn it into a playable 4-key session. Your charts stay in your browser.</p>
+      </div>
+
+      <div class="library-grid">
+        <section class="panel upload-panel">
+          <div class="panel-icon">↥</div>
+          <h2>Import a beatmap</h2>
+          <p>Choose an <strong>.osz</strong> file. We'll read its difficulties and audio locally in your browser.</p>
+          <label class="upload-button" for="osz-input">＋ &nbsp; Choose .osz file</label>
+          <input id="osz-input" type="file" accept=".osz,application/zip">
+          <div id="upload-status" class="status-line" aria-live="polite">No chart loaded yet</div>
+          <div class="fine-print">Files are processed locally. Nothing is uploaded to a server.</div>
+        </section>
+
+        <section class="panel chart-panel">
+          <div class="section-heading">
+            <div><div class="eyebrow">YOUR LIBRARY</div><h2>Beatmaps</h2></div>
+            <span id="chart-count" class="count-pill">0 MAPS</span>
+          </div>
+          <div id="chart-list" class="chart-list empty-state">
+            <div class="empty-icon">♫</div>
+            <strong>Your next favorite map goes here.</strong>
+            <span>Import an .osz archive to get started.</span>
+          </div>
+        </section>
+      </div>
+      <footer class="footer-note"><span>4 LANES</span><span>·</span><span>LOCAL FILE IMPORT</span><span>·</span><span>EARLY ACCESS BUILD</span></footer>
+    </section>
+
+    <section id="play-screen" class="screen hidden">
+      <div class="play-header">
+        <button id="back-button" class="ghost-button">← Library</button>
+        <div class="song-heading"><div id="playing-artist" class="song-artist"></div><h2 id="playing-title">Track title</h2><div id="playing-difficulty" class="song-difficulty"></div></div>
+        <div class="score-box"><span>SCORE</span><strong id="score">0000000</strong></div>
+      </div>
+
+      <div class="game-layout">
+        <aside class="side-stat">
+          <div class="stat-card"><span>ACCURACY</span><strong id="accuracy">100.00%</strong></div>
+          <div class="stat-card"><span>COMBO</span><strong id="combo">0x</strong></div>
+          <div class="stat-card"><span>MAX COMBO</span><strong id="max-combo">0x</strong></div>
+          <div class="key-help"><span class="eyebrow">KEYBINDS</span><div class="key-row"><kbd>D</kbd><kbd>F</kbd><kbd>J</kbd><kbd>K</kbd></div><p>Hit notes as they reach the line.</p></div>
+        </aside>
+
+        <div class="stage-wrap">
+          <div class="stage-topline"><span id="stage-song">READY</span><span>4K MODE</span></div>
+          <div id="stage" class="stage" tabindex="0" aria-label="Four lane rhythm game">
+            <div class="lane-guides"><i></i><i></i><i></i><i></i></div>
+            <div id="notes-layer" class="notes-layer"></div>
+            <div class="hit-line"></div>
+            <div class="lane-keys"><kbd>D</kbd><kbd>F</kbd><kbd>J</kbd><kbd>K</kbd></div>
+            <div id="judgement" class="judgement"></div>
+            <div id="countdown" class="countdown">READY?</div>
+          </div>
+          <div class="stage-bottomline"><span>MISS <b id="misses">0</b></span><span>GREAT <b id="greats">0</b></span><span>PERFECT <b id="perfects">0</b></span></div>
+          <div class="play-actions"><button id="start-button" class="primary-button">▶ &nbsp; Start song</button><button id="restart-button" class="ghost-button">↻ Restart</button></div>
+        </div>
+      </div>
+      <audio id="audio" preload="auto"></audio>
+      <div id="result-overlay" class="result-overlay hidden">
+        <div class="result-card"><div class="eyebrow">SESSION COMPLETE</div><h2>Nice run.</h2><div id="final-score" class="final-score">0</div><div id="final-accuracy" class="final-accuracy">100.00% accuracy</div><button id="result-library" class="primary-button">Back to library</button></div>
+      </div>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
