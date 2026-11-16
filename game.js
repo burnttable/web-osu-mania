@@ -6,6 +6,7 @@ const state = {
   selected: null,
   notes: [],
   activeNotes: [],
+  holdingNotes: [],
   playing: false,
   started: false,
   raf: 0,
@@ -328,6 +329,7 @@ function resetGame() {
     : [];
 
   state.activeNotes = [];
+  state.holdingNotes = [];
 
   state.score = 0;
   state.combo = 0;
@@ -347,6 +349,9 @@ function resetGame() {
   $('countdown').textContent = 'READY?';
 
   $('judgement').textContent = '';
+  document.querySelectorAll('.lane-keys kbd').forEach(key => {
+    key.classList.remove('active');
+  });
 
   $('start-button').disabled = false;
   $('start-button').textContent = '▶  Start song';
@@ -412,8 +417,8 @@ function tick() {
 
   const active = state.notes.filter(n =>
     !n.judged &&
-    n.time - now <= state.approach &&
-    n.time - now >= -230
+    ((n.holding && now <= n.endTime + 120) ||
+      (n.time - now <= state.approach && n.time - now >= -230))
   );
 
   $('notes-layer').innerHTML = '';
@@ -422,7 +427,8 @@ function tick() {
     const el = document.createElement('div');
 
     el.className =
-      `note lane-${note.lane}${note.hold ? ' hold' : ''}`;
+      `note lane-${note.lane}${note.hold ? ' hold' : ''}` +
+      `${note.holding ? ' holding' : ''}`;
 
     const y =
       hitY - ((note.time - now) / state.approach) * travel;
@@ -443,15 +449,14 @@ function tick() {
   }
 
   for (const note of state.notes) {
-    if (!note.judged && now > note.time + 170) {
+    if (note.holding && now >= note.endTime - 120) {
+      judgeHit(note, Math.abs(note.time - note.startedAt));
+    } else if (!note.judged && !note.holding && now > note.time + 170) {
       judgeMiss(note);
     }
   }
 
-  if (
-    now >= Math.max(...state.notes.map(n => n.time)) + 1200 ||
-    audio.ended
-  ) {
+  if (now >= Math.max(...state.notes.map(n => n.endTime)) + 1200) {
     finishGame();
     return;
   }
@@ -479,6 +484,9 @@ function flashJudgement(label, color) {
 
 function judgeMiss(note) {
   note.judged = true;
+  note.holding = false;
+
+  state.holdingNotes = state.holdingNotes.filter(held => held !== note);
 
   state.misses++;
   state.combo = 0;
@@ -509,7 +517,22 @@ function hitLane(lane) {
   const note = candidates[0];
   const delta = Math.abs(note.time - now);
 
+  if (note.hold && note.endTime > note.time) {
+    note.holding = true;
+    note.startedAt = now;
+    note.holdKey = Object.keys(keyMap).find(key => keyMap[key] === lane);
+    state.holdingNotes.push(note);
+    return;
+  }
+
+  judgeHit(note, delta);
+}
+
+function judgeHit(note, delta) {
   note.judged = true;
+  note.holding = false;
+
+  state.holdingNotes = state.holdingNotes.filter(held => held !== note);
 
   state.hits++;
   state.totalJudged++;
@@ -547,6 +570,12 @@ function finishGame() {
   $('final-score').textContent =
     String(state.score).padStart(7, '0');
 
+  const cleared = accuracy() >= 70;
+
+  $('result-status').textContent =
+    cleared ? 'CHART CLEARED' : 'NOT CLEARED';
+  $('result-heading').textContent =
+    cleared ? 'Great run!' : 'Keep practicing';
   $('final-accuracy').textContent =
     `${accuracy().toFixed(2)}% accuracy · ${state.maxCombo}x max combo`;
 
@@ -581,6 +610,18 @@ function keyUp(event) {
   if (keyEls[keyMap[key]]) {
     keyEls[keyMap[key]].classList.remove('active');
   }
+
+  const note = state.holdingNotes.find(held => held.holdKey === key);
+
+  if (!state.playing || !note || note.holdKey !== key) return;
+
+  const now = audio.currentTime * 1000;
+
+  if (now >= note.endTime - 120) {
+    judgeHit(note, Math.abs(note.time - note.startedAt));
+  } else {
+    judgeMiss(note);
+  }
 }
 
 window.addEventListener('keydown', keyDown);
@@ -589,6 +630,7 @@ window.addEventListener('keyup', keyUp);
 $('start-button').addEventListener('click', startGame);
 
 $('restart-button').addEventListener('click', resetGame);
+$('result-restart').addEventListener('click', resetGame);
 
 $('back-button').addEventListener('click', () => {
   state.playing = false;

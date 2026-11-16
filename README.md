@@ -21,19 +21,20 @@ The project loads JSZip from a CDN, so an internet connection is needed on first
 - Reads title, artist, mapper, difficulty name, audio filename, and hit objects.
 - Plays tap notes and displays hold-note bodies.
 - D/F/J/K controls, Perfect/Great/Miss judgments, score, accuracy, and combo.
+- Hold notes must be held through their tails. Releasing early breaks combo and counts as a miss.
+- A finished round clears at 70% accuracy and shows a retry button.
 - Uses original CSS shapes and interface styling.
 
 ## Current limitations
 
 - This first playable build supports **4K osu!mania only**. Other key counts and other osu! modes are skipped with a clear message.
-- Hold notes are currently judged on their head press; full hold/release tracking is a next step.
 - It uses a simple fixed timing window and note approach speed. Advanced timing-point changes, custom offsets, scroll-speed settings, skin support, storyboard/video elements, and full osu! scoring are not implemented yet.
 - Some archives use unusual audio paths or formats that a browser may not decode. MP3 and OGG are the safest choices.
 - This is an original learning project inspired by the rhythm-game format, not an official osu! client.
 
 ## Files
 
-- `index.html` — page structure
+- `index(3).html` — page structure
 - `style.css` — visual design
 - `game.js` — archive import, beatmap parser, and game loop
 
