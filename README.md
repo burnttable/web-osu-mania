@@ -1,18 +1,19 @@
-# osu!mania Custom Charts (4K prototype)
+# Mania / Custom
 
-A small browser rhythm game inspired by osu!mania. Import an `.osz` archive, choose a compatible 4-key (`Mode: 3`, `CircleSize: 4`) difficulty, and play with **D F J K**.
+A small browser rhythm game inspired by osu!mania. Import an `.osz` archive, choose a compatible 4-key (`Mode: 3`, `CircleSize: 4`) difficulty, and play with **D F J K**. Charts and audio stay in your browser.
 
-## Run it
+## Start and play
 
-1. Extract this project folder.
-2. Open a terminal in the folder.
-3. Start a local web server:
+1. Open a terminal in the project folder.
+2. Start a local web server:
    - Python: `python -m http.server 8000`
    - Or VS Code: use the Live Server extension.
-4. Open `http://localhost:8000` in your browser.
-5. Import an `.osz` file and press **PLAY** next to a 4K difficulty.
+3. Open `http://localhost:8000` in your browser.
+4. Choose an `.osz` file, then press **PLAY** next to a 4K difficulty.
+5. Press **Start song**. Tap **D**, **F**, **J**, or **K** when a note reaches the line. Hold the matching key through a long note; releasing early counts as a miss.
+6. Reach **70% accuracy** to clear the chart. Use **Restart** or **Play again** to try again.
 
-The project loads JSZip from a CDN, so an internet connection is needed on first load. The beatmap archive and its audio are processed locally in your browser; they are not sent to a server.
+The project loads JSZip from a CDN, so an internet connection is needed on first load. You need a compatible 4K `.osz` chart to play; use a chart and audio you have permission to use. The beatmap archive and its audio are processed locally in your browser; they are not sent to a server.
 
 ## Current prototype features
 
@@ -22,7 +23,7 @@ The project loads JSZip from a CDN, so an internet connection is needed on first
 - Plays tap notes and displays hold-note bodies.
 - D/F/J/K controls, Perfect/Great/Miss judgments, score, accuracy, and combo.
 - Hold notes must be held through their tails. Releasing early breaks combo and counts as a miss.
-- A finished round clears at 70% accuracy and shows a retry button.
+- A finished round clears at 70% accuracy and shows the score, accuracy, max combo, and retry/library buttons.
 - Uses original CSS shapes and interface styling.
 
 ## Current limitations
@@ -34,10 +35,8 @@ The project loads JSZip from a CDN, so an internet connection is needed on first
 
 ## Files
 
-- `index(3).html` — page structure
+- `index.html` — page structure and the default web-server entry point
 - `style.css` — visual design
 - `game.js` — archive import, beatmap parser, and game loop
 
-## GitHub
-
-Create one repository named `osu-mania-custom`, add these files, commit, and push. Do not upload copyrighted beatmap/audio files to your repository unless you have permission; test with maps you are allowed to use.
+Do not upload copyrighted beatmap/audio files to the repository unless you have permission.
